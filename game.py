@@ -37,6 +37,7 @@ def main():
         running = True
         spaceship = Spaceship()
         bullets = []
+        level = 1
         aliens = [Alien() for _ in range(5)]
         score = 0
 
@@ -78,6 +79,19 @@ def main():
                         aliens.append(Alien())
                         score += 1
                         explosion_sound.play()
+                # Check if alien passed the player
+                if alien.rect.top > 600:  # Assuming SCREEN_HEIGHT = 600
+                    score -= 1
+                    if score < 0:
+                        running = False
+                        game_over_screen(screen, score, game_over_sound)
+
+            # Level progression
+            if score >= level * 10:
+                level += 1
+                aliens.extend(Alien() for _ in range(2))  # Add more aliens
+                for alien in aliens:
+                    alien.rect.y += level  # Increase speed
 
             # Fill the screen with a black color
             screen.fill((0, 0, 0))
@@ -87,10 +101,12 @@ def main():
             for alien in aliens:
                 alien.draw(screen)
 
-            # Display score
+            # Display score and level
             font = pygame.font.SysFont(None, 36)
             score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+            level_text = font.render(f"Level: {level}", True, (255, 255, 255))
             screen.blit(score_text, (10, 10))
+            screen.blit(level_text, (10, 50))
 
             # Update the display
             pygame.display.flip()
