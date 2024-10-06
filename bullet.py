@@ -8,7 +8,7 @@ class Bullet:
         self.image.fill((255, 0, 0))
         self.rect = self.image.get_rect(center=(x, y))
         self.angle = angle
-        self.speed = 10  # Bullet speed
+        self.speed = 6.7  # Reduced from 10
 
         radians = math.radians(self.angle)
         self.vx = self.speed * math.sin(radians)

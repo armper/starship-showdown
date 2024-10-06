@@ -12,9 +12,9 @@ class Spaceship:
         self.last_update = pygame.time.get_ticks()
         
         # New attributes for speed and acceleration
-        self.base_speed = 5
-        self.acceleration = 0.31415
-        self.max_speed = 10
+        self.base_speed = 3.35  # Reduced from 5
+        self.acceleration = 0.21  # Reduced from 0.31415
+        self.max_speed = 6.7  # Reduced from 10
         self.current_speed_x = 0
         self.current_speed_y = 0
 

@@ -113,8 +113,8 @@ def main():
                         shoot_sound.play()
 
             keys = pygame.key.get_pressed()
-            dx = (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * 5
-            dy = (keys[pygame.K_DOWN] - keys[pygame.K_UP]) * 5
+            dx = (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * 3.35  # Reduced from 5
+            dy = (keys[pygame.K_DOWN] - keys[pygame.K_UP]) * 3.35  # Reduced from 5
             spaceship.move(dx, dy)
 
             if random.randint(1, 1000) == 5:

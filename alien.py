@@ -11,8 +11,8 @@ class Alien:
         self.rect.x, self.rect.y = self.get_valid_position(existing_aliens)
         self.animation_speed = 0.1  # Adjust this value to change the speed of the animation
         self.last_update = pygame.time.get_ticks()
-        self.base_speed = 2  # Base speed of the alien
-        self.speed = self.base_speed + random.uniform(0, speed_variation)  # Adjust speed
+        self.base_speed = 1.34  # Reduced from 2
+        self.speed = self.base_speed + random.uniform(0, speed_variation * 0.67)  # Adjusted speed variation
 
     def get_valid_position(self, existing_aliens):
         min_distance = 30  # Adjust this value to change the minimum spacing

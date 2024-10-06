@@ -8,7 +8,7 @@ class PowerUp:
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, 800 - self.rect.width)  # SCREEN_WIDTH = 800
         self.rect.y = random.randint(-100, -40)
-        self.speed = 2  # Power-up falling speed
+        self.speed = 3  # Reduced from 2
 
     def update(self):
         self.rect.y += self.speed
