@@ -176,7 +176,7 @@ def main():
                 # Add new aliens for the next level
                 aliens.extend(
                     Alien(aliens, speed_variation=alien_speed_variation)
-                    for _ in range(1 + level // 8)  # Adjust the divisor to control alien increase. The higher the number, the slower the increase.
+                    for _ in range(3 + level)  # Start with 3 aliens and add more as the level increases
                 )
 
             screen.fill((0, 0, 0))
