@@ -53,6 +53,27 @@ def title_screen(screen):
                     waiting = False
 
 
+def level_complete_screen(screen, level):
+    font = pygame.font.SysFont(None, 72)
+    complete_text = font.render(f"Completed Level {level}", True, (0, 255, 0))
+    instruction_text = font.render("Press ENTER to begin next level", True, (255, 255, 255))
+    
+    screen.fill((0, 0, 0))
+    screen.blit(complete_text, (400 - complete_text.get_width() // 2, 250))
+    screen.blit(instruction_text, (400 - instruction_text.get_width() // 2, 350))
+    pygame.display.flip()
+    
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    waiting = False
+
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
@@ -148,8 +169,11 @@ def main():
                 powerup_active = False
 
             if score >= level * 15:
+                level_complete_screen(screen, level)
                 level += 1
-                # Pass speed_variation when adding new aliens for the new level
+                # Clear out previous aliens
+                aliens.clear()
+                # Add new aliens for the next level
                 aliens.extend(
                     Alien(aliens, speed_variation=alien_speed_variation)
                     for _ in range(1 + level // 8)  # Adjust the divisor to control alien increase. The higher the number, the slower the increase.
