@@ -82,6 +82,8 @@ def main():
 
     title_screen(screen)
 
+    highest_score = 0  # Initialize the highest score
+
     while True:
         clock = pygame.time.Clock()
         running = True
@@ -139,7 +141,6 @@ def main():
                     if alien.rect.colliderect(bullet.rect):
                         bullets.remove(bullet)
                         aliens.remove(alien)
-                        # Pass speed_variation when creating a new alien
                         aliens.append(Alien(aliens, speed_variation=alien_speed_variation))
                         score += 1
                         explosion_sound.play()
@@ -152,7 +153,6 @@ def main():
                             running = False
                             game_over_screen(screen, score, game_over_sound)
                         aliens.remove(alien)
-                        # Pass speed_variation when creating a new alien
                         aliens.append(Alien(aliens, speed_variation=alien_speed_variation))
 
             for powerup in powerups[:]:
@@ -177,6 +177,10 @@ def main():
                     for _ in range(3 + level)
                 )
 
+            # Update the highest score
+            if score > highest_score:
+                highest_score = score
+
             screen.fill((0, 0, 0))
             spaceship.draw(screen)
             for bullet in bullets:
@@ -187,10 +191,12 @@ def main():
                 powerup.draw(screen)
 
             font = pygame.font.SysFont(None, 36)
+            highest_score_text = font.render(f"Highest Score: {highest_score}", True, (255, 255, 255))
             score_text = font.render(f"Score: {score}", True, (255, 255, 255))
             level_text = font.render(f"Level: {level}", True, (255, 255, 255))
-            screen.blit(score_text, (10, 10))
-            screen.blit(level_text, (10, 50))
+            screen.blit(highest_score_text, (10, 10))
+            screen.blit(score_text, (10, 50))
+            screen.blit(level_text, (10, 90))
 
             pygame.display.flip()
             clock.tick(60)
