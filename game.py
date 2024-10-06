@@ -66,7 +66,8 @@ def main():
         running = True
         spaceship = Spaceship()
         bullets = []
-        aliens = [Alien([]) for _ in range(3)]  # Initialize with an empty list for the first batch
+        alien_speed_variation = 3  # Adjust this value as needed
+        aliens = [Alien([], speed_variation=alien_speed_variation) for _ in range(3)]
         powerups = []
         score = 0
         level = 1
@@ -117,7 +118,8 @@ def main():
                     if alien.rect.colliderect(bullet.rect):
                         bullets.remove(bullet)
                         aliens.remove(alien)
-                        aliens.append(Alien(aliens))
+                        # Pass speed_variation when creating a new alien
+                        aliens.append(Alien(aliens, speed_variation=alien_speed_variation))
                         score += 1
                         explosion_sound.play()
                         break
@@ -129,7 +131,8 @@ def main():
                             running = False
                             game_over_screen(screen, score, game_over_sound)
                         aliens.remove(alien)
-                        aliens.append(Alien(aliens))
+                        # Pass speed_variation when creating a new alien
+                        aliens.append(Alien(aliens, speed_variation=alien_speed_variation))
 
             for powerup in powerups[:]:
                 powerup.update()
@@ -146,7 +149,11 @@ def main():
 
             if score >= level * 15:
                 level += 1
-                aliens.extend(Alien(aliens) for _ in range(1 + level // 2))
+                # Pass speed_variation when adding new aliens for the new level
+                aliens.extend(
+                    Alien(aliens, speed_variation=alien_speed_variation)
+                    for _ in range(1 + level // 2)
+                )
 
             screen.fill((0, 0, 0))
             spaceship.draw(screen)
