@@ -71,7 +71,7 @@ def main():
                     bullets.remove(bullet)
 
             # Update aliens
-            for alien in aliens:
+            for alien in aliens[:]:
                 alien.update()
                 # Check for collision with spaceship
                 if alien.rect.colliderect(spaceship.rect):
