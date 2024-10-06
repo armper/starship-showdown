@@ -1,4 +1,3 @@
-
 import pygame
 import random
 
@@ -13,9 +12,6 @@ class Alien:
 
     def update(self):
         self.rect.y += 2  # Assuming ALIEN_SPEED = 2
-        if self.rect.top > 600:  # Assuming SCREEN_HEIGHT = 600
-            self.rect.x = random.randint(0, 800 - self.rect.width)
-            self.rect.y = random.randint(-100, -40)
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)

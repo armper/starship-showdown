@@ -1,9 +1,9 @@
-
 import pygame
 from spaceship import Spaceship
 from bullet import Bullet
 from alien import Alien
 from utils import load_sounds
+
 
 def game_over_screen(screen, score, game_over_sound):
     game_over_sound.play()
@@ -11,8 +11,10 @@ def game_over_screen(screen, score, game_over_sound):
     text = font.render("Game Over", True, (255, 0, 0))
     score_text = font.render(f"Score: {score}", True, (255, 255, 255))
     screen.fill((0, 0, 0))
-    screen.blit(text, (400 - text.get_width() // 2, 300 - text.get_height()))  # Assuming SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600
-    screen.blit(score_text, (400 - score_text.get_width() // 2, 300 + text.get_height()))
+    # Assuming SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600
+    screen.blit(text, (400 - text.get_width() // 2, 300 - text.get_height()))
+    screen.blit(score_text, (400 - score_text.get_width() //
+                2, 300 + text.get_height()))
     pygame.display.flip()
     pygame.time.wait(2000)
 
@@ -26,9 +28,11 @@ def game_over_screen(screen, score, game_over_sound):
             elif event.type == pygame.KEYDOWN:
                 waiting = False
 
+
 def main():
     pygame.init()
-    screen = pygame.display.set_mode((800, 600))  # Assuming SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600
+    # Assuming SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600
+    screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("Spaceship Game")
     shoot_sound, explosion_sound, game_over_sound = load_sounds()
 
@@ -49,12 +53,14 @@ def main():
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         # Shoot a bullet
-                        bullet = Bullet(spaceship.rect.centerx, spaceship.rect.top)
+                        bullet = Bullet(spaceship.rect.centerx,
+                                        spaceship.rect.top)
                         bullets.append(bullet)
                         shoot_sound.play()
 
             keys = pygame.key.get_pressed()
-            dx = (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * 5  # Assuming SPACESHIP_SPEED = 5
+            dx = (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * \
+                5  # Assuming SPACESHIP_SPEED = 5
             dy = (keys[pygame.K_DOWN] - keys[pygame.K_UP]) * 5
             spaceship.move(dx, dy)
 
@@ -79,19 +85,20 @@ def main():
                         aliens.append(Alien())
                         score += 1
                         explosion_sound.play()
+
                 # Check if alien passed the player
                 if alien.rect.top > 600:  # Assuming SCREEN_HEIGHT = 600
                     score -= 1
-                    if score < 0:
+                    if score <= 0:
                         running = False
                         game_over_screen(screen, score, game_over_sound)
+                    aliens.remove(alien)
+                    aliens.append(Alien())
 
             # Level progression
             if score >= level * 10:
                 level += 1
                 aliens.extend(Alien() for _ in range(2))  # Add more aliens
-                for alien in aliens:
-                    alien.rect.y += level  # Increase speed
 
             # Fill the screen with a black color
             screen.fill((0, 0, 0))
