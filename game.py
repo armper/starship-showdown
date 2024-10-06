@@ -1,7 +1,10 @@
 import pygame
+import sys
+import random
 from spaceship import Spaceship
 from bullet import Bullet
 from alien import Alien
+from powerup import PowerUp
 from utils import load_sounds
 
 
@@ -41,9 +44,12 @@ def main():
         running = True
         spaceship = Spaceship()
         bullets = []
-        level = 1
-        aliens = [Alien() for _ in range(5)]
+        aliens = [Alien() for _ in range(3)]  # Start with fewer aliens at level 1
+        powerups = []
         score = 0
+        level = 1
+        powerup_active = False
+        powerup_start_time = 0  # In milliseconds
 
         while running:
             for event in pygame.event.get():
@@ -52,31 +58,46 @@ def main():
                     sys.exit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        # Shoot a bullet
-                        bullet = Bullet(spaceship.rect.centerx,
-                                        spaceship.rect.top)
-                        bullets.append(bullet)
+                        # Shoot bullets
+                        if powerup_active:
+                            # Fire bullets at -20, 0, and +20 degrees
+                            angles = [-20, 0, 20]
+                            for angle in angles:
+                                bullet = Bullet(spaceship.rect.centerx, spaceship.rect.top, angle)
+                                bullets.append(bullet)
+                        else:
+                            # Regular bullet
+                            bullet = Bullet(spaceship.rect.centerx, spaceship.rect.top)
+                            bullets.append(bullet)
                         shoot_sound.play()
 
             keys = pygame.key.get_pressed()
-            dx = (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * \
-                5  # Assuming SPACESHIP_SPEED = 5
+            dx = (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * 5
             dy = (keys[pygame.K_DOWN] - keys[pygame.K_UP]) * 5
             spaceship.move(dx, dy)
+
+            # Randomly spawn power-ups
+            if random.randint(1, 1000) == 5:  # Increase the range to make it less frequent
+                powerup = PowerUp()
+                powerups.append(powerup)
 
             # Update bullets
             for bullet in bullets[:]:
                 bullet.update()
-                if bullet.rect.bottom < 0:
+                if (bullet.rect.bottom < 0 or bullet.rect.top > 600 or
+                    bullet.rect.right < 0 or bullet.rect.left > 800):
                     bullets.remove(bullet)
 
             # Update aliens
             for alien in aliens[:]:
                 alien.update()
-                # Check for collision with spaceship
+
+                # Check collision with spaceship
                 if alien.rect.colliderect(spaceship.rect):
                     running = False
                     game_over_screen(screen, score, game_over_sound)
+                    continue  # Skip further processing for this alien
+
                 # Check for collision with bullets
                 for bullet in bullets[:]:
                     if alien.rect.colliderect(bullet.rect):
@@ -85,20 +106,36 @@ def main():
                         aliens.append(Alien())
                         score += 1
                         explosion_sound.play()
+                        break  # Exit the bullet loop
 
-                # Check if alien passed the player
-                if alien.rect.top > 600:  # Assuming SCREEN_HEIGHT = 600
-                    score -= 1
-                    if score <= 0:
-                        running = False
-                        game_over_screen(screen, score, game_over_sound)
-                    aliens.remove(alien)
-                    aliens.append(Alien())
+                else:
+                    # Only check if the alien didn't collide with a bullet
+                    if alien.rect.top > 600:
+                        score -= 1
+                        if score <= 0:
+                            running = False
+                            game_over_screen(screen, score, game_over_sound)
+                        aliens.remove(alien)
+                        aliens.append(Alien())
+
+            # Update power-ups
+            for powerup in powerups[:]:
+                powerup.update()
+                if powerup.rect.colliderect(spaceship.rect):
+                    powerups.remove(powerup)
+                    powerup_active = True
+                    powerup_start_time = pygame.time.get_ticks()
+                elif powerup.rect.top > 600:
+                    powerups.remove(powerup)
+
+            # Check power-up duration (10 seconds)
+            if powerup_active and pygame.time.get_ticks() - powerup_start_time > 10000:
+                powerup_active = False
 
             # Level progression
-            if score >= level * 10:
+            if score >= level * 15:  # Increase the multiplier for higher levels
                 level += 1
-                aliens.extend(Alien() for _ in range(2))  # Add more aliens
+                aliens.extend(Alien() for _ in range(1 + level // 2))  # Add fewer aliens as levels increase
 
             # Fill the screen with a black color
             screen.fill((0, 0, 0))
@@ -107,6 +144,8 @@ def main():
                 bullet.draw(screen)
             for alien in aliens:
                 alien.draw(screen)
+            for powerup in powerups:
+                powerup.draw(screen)
 
             # Display score and level
             font = pygame.font.SysFont(None, 36)
