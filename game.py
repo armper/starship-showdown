@@ -32,12 +32,35 @@ def game_over_screen(screen, score, game_over_sound):
                 waiting = False
 
 
+def title_screen(screen):
+    font = pygame.font.SysFont(None, 72)
+    title_text = font.render("Starship Showdown", True, (255, 255, 255))
+    instruction_text = font.render("Press SPACE to Start", True, (255, 255, 255))
+    
+    screen.fill((0, 0, 0))
+    screen.blit(title_text, (400 - title_text.get_width() // 2, 250))
+    screen.blit(instruction_text, (400 - instruction_text.get_width() // 2, 350))
+    pygame.display.flip()
+    
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    waiting = False
+
+
 def main():
     pygame.init()
     # Assuming SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600
     screen = pygame.display.set_mode((800, 600))
-    pygame.display.set_caption("Spaceship Game")
-    shoot_sound, explosion_sound, game_over_sound = load_sounds()
+    pygame.display.set_caption("Starship Showdown")
+    shoot_sound, explosion_sound, game_over_sound, powerup_sound = load_sounds()  # Include powerup_sound
+
+    title_screen(screen)  # Show the title screen before starting the game
 
     while True:
         clock = pygame.time.Clock()
@@ -125,6 +148,7 @@ def main():
                     powerups.remove(powerup)
                     powerup_active = True
                     powerup_start_time = pygame.time.get_ticks()
+                    powerup_sound.play()  # Play the power-up sound
                 elif powerup.rect.top > 600:
                     powerups.remove(powerup)
 
