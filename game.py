@@ -168,15 +168,13 @@ def main():
             if powerup_active and pygame.time.get_ticks() - powerup_start_time > 10000:
                 powerup_active = False
 
-            if score >= level * 15:
+            if score >= level * (15 + level * 5):  # Increase the requirement as level increases
                 level_complete_screen(screen, level)
                 level += 1
-                # Clear out previous aliens
                 aliens.clear()
-                # Add new aliens for the next level
                 aliens.extend(
                     Alien(aliens, speed_variation=alien_speed_variation)
-                    for _ in range(3 + level)  # Start with 3 aliens and add more as the level increases
+                    for _ in range(3 + level)
                 )
 
             screen.fill((0, 0, 0))
